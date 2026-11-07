@@ -157,16 +157,27 @@ function mark(){
   var a=parseFloat($("f_av").value);if(!isNaN(a)){last[openId]={av:a/100,s:$("f_et").value};LS.set("nktt_last",JSON.stringify(last))}
   render();
 }
+var pend=null;
 function sendWA(){
   var m=message();if(!m)return;
-  var data={text:m,title:"ANESP – NKTT Sud"},withFiles=false;
-  if(photos.length&&navigator.canShare&&navigator.canShare({files:photos})){data.files=photos;withFiles=true}
-  if(navigator.share){
-    navigator.share(data).then(mark).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message » puis collez-le dans le groupe."});
+  var T="ANESP – NKTT Sud";
+  if(photos.length&&navigator.canShare&&navigator.canShare({files:photos})){
+    navigator.share({files:photos,title:T}).then(function(){
+      pend=m;var b=$("wa");b.textContent="Étape 2 : envoyer le message";b.id="wa2";
+      $("msg").textContent="Photos envoyées. Touchez maintenant « Étape 2 » pour envoyer le message.";
+    }).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message » puis collez-le dans le groupe."});
     return;
   }
-  if(photos.length&&!withFiles)alert("Les photos ne peuvent pas être jointes automatiquement sur cet appareil. Après l’ouverture de WhatsApp, joignez-les à la main.");
+  if(navigator.share){
+    navigator.share({text:m,title:T}).then(function(){mark();if(photos.length)alert("Le message est parti. Les photos doivent être envoyées à la main dans WhatsApp.")}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
+    return;
+  }
+  if(photos.length)alert("Les photos ne peuvent pas être jointes automatiquement sur cet appareil. Après l’ouverture de WhatsApp, joignez-les à la main.");
   mark();window.location.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m);
+}
+function sendMsg(){
+  if(!pend)return;
+  navigator.share({text:pend,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
 }
 function shrink(f,n){
   return new Promise(function(res){
@@ -201,7 +212,7 @@ document.addEventListener("click",function(e){
   var t=e.target.closest("button");
   if(!t){if(e.target.id==="sheet")closeSheet();return}
   if(t.classList.contains("site"))openSite(t.dataset.id);
-  else if(t.id==="wa")sendWA();else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd"){openSite(repId)}
+  else if(t.id==="wa")sendWA();else if(t.id==="wa2")sendMsg();else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd"){openSite(repId)}
 });
 render();
 function fromHash(){
