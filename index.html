@@ -77,6 +77,7 @@ textarea{min-height:110px;resize:vertical}
 <script>
 // Numéro WhatsApp qui reçoit les fiches, format international sans « + » (ex. "22212345678"). Laisser vide pour choisir le contact à chaque envoi.
 var WA_NUMBER="";
+var SITE_URL="https://ahmedelhadi20200-dotcom.github.io/anesp-nktt/";
 var SITES=[
 {id:"s01",n:"École Cheikh Med El Hafedh (redéployée à Lemrabot Sidi Mahmoud)",z:"Arafat",e:"E2PC",t:"34162252",i:"Extension d’un bloc de 6 SDC",c:[18.060792,-15.943324],r:"30/10/2026",d:.029,av:0,s:"Non entamé",o:"Espace suffisant pour 6 SDC."},
 {id:"s02",n:"École en face du quartier PK 15",z:"El Mina – PK 15",e:"EL BARAKA",t:"22615125",i:"12 SDC + administration + toilettes + loge + clôture",c:[17.952359,-15.980966],r:"10/09/2026",d:.2375,av:.16,s:"Arrêté",o:"Travaux arrêtés par le maître d’ouvrage après le coulage des semelles (proximité des éoliennes)."},
@@ -125,6 +126,21 @@ function openSite(id){
   '<div class="row2"><button class="btn ghost" id="cp" type="button">Copier le message</button><button class="btn ghost" id="close" type="button">Fermer</button></div><div class="msg" id="msg" role="status"></div>';
   $("sheet").classList.add("open");
 }
+function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function dec(t){t=t.replace(/-/g,"+").replace(/_/g,"/");while(t.length%4)t+="=";return JSON.parse(decodeURIComponent(escape(atob(t))))}
+var repId=null;
+function showReport(r){
+  var s=SITES.filter(function(x){return x.id===r.i})[0];if(!s)return;
+  repId=s.id;var av=Math.max(0,Math.min(100,Number(r.a)||0));
+  var d=r.d?r.d.split("-").reverse().join("/"):"non renseignée";
+  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><p class="info">'+esc(s.e)+' – '+esc(s.z)+'</p>'+
+  '<div class="top" style="margin-top:14px"><div class="nm">Avancement</div><div class="pct">'+av+' %</div></div><div class="bar"><i style="width:'+av+'%"></i></div>'+
+  '<div class="meta"><span class="tag '+tagCls(r.e)+'">'+esc(r.e)+'</span></div>'+
+  '<div class="base">Ouvriers présents : '+esc(r.w||"non renseigné")+'\nDate de visite : '+esc(d)+'\nTechnicien : '+esc(r.b)+'\nObservations : '+esc(r.o||"néant")+'</div>'+
+  '<p class="note">Les photos de cette visite sont dans le message du groupe, juste au-dessus du lien.</p>'+
+  '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn ghost" id="close" type="button">Fermer</button>';
+  $("sheet").classList.add("open");
+}
 function err(t){$("msg").textContent=t;alert(t)}
 function message(){
   var s=site(),av=parseFloat($("f_av").value);
@@ -133,7 +149,7 @@ function message(){
   LS.set("nktt_tech",$("f_by").value.trim());
   var d=$("f_dt").value.split("-").reverse().join("/");
   var L=["*ANESP – NKTT Sud – Fiche de suivi*","Chantier : "+s.n,"Entreprise : "+s.e,"Zone : "+s.z,"Date de visite : "+d,"Avancement : "+Math.round(av)+" %","État : "+$("f_et").value,"Ouvriers présents : "+($("f_ef").value||"non renseigné"),"Technicien : "+$("f_by").value.trim(),"Observations : "+($("f_ob").value.trim()||"néant")];
-  L.push("Position du chantier : https://www.google.com/maps?q="+s.c[0]+","+s.c[1]);
+  L.push("Voir la fiche : "+SITE_URL+"#r="+enc({i:s.id,a:Math.round(av),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim()}));
   return L.join("\n");
 }
 function mark(){
@@ -179,15 +195,21 @@ function copyMsg(){
   function fb(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("msg").textContent="Copie impossible."}document.body.removeChild(t)}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else{fb()}
 }
-function closeSheet(){$("sheet").classList.remove("open");openId=null}
+function closeSheet(){$("sheet").classList.remove("open");openId=null;if(location.hash){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}}}
 document.addEventListener("change",function(e){if(e.target.id==="f_ph")addPhotos(e.target.files)});
 document.addEventListener("click",function(e){
   var t=e.target.closest("button");
   if(!t){if(e.target.id==="sheet")closeSheet();return}
   if(t.classList.contains("site"))openSite(t.dataset.id);
-  else if(t.id==="wa")sendWA();else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();
+  else if(t.id==="wa")sendWA();else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd"){openSite(repId)}
 });
 render();
+function fromHash(){
+  var m=location.hash.match(/^#r=(.+)$/);
+  if(m){try{showReport(dec(m[1]))}catch(e){}return}
+  m=location.hash.match(/^#(s\d\d)$/);if(m&&SITES.some(function(x){return x.id===m[1]}))openSite(m[1]);
+}
+fromHash();window.addEventListener("hashchange",fromHash);
 </script>
 </body>
 </html>
