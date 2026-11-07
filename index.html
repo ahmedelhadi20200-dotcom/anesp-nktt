@@ -62,7 +62,7 @@ textarea{min-height:110px;resize:vertical}
 .foot{display:flex;gap:8px;margin:6px 0 28px}
 .foot button{flex:1}
 
-.sub2{font-size:.85rem;color:var(--mute);margin:8px 0 0}.btn.wa{background:#1f9d55;color:#fff!important}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sent{font-size:.76rem;color:var(--ok);margin-top:4px}
+.sub2{font-size:.85rem;color:var(--mute);margin:8px 0 0}.btn.wa{background:#1f9d55;color:#fff!important}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ph{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.ph img{width:100%;border-radius:10px;display:block;background:var(--bar)}.sent{font-size:.76rem;color:var(--ok);margin-top:4px}
 </style>
 </head>
 <body>
@@ -77,6 +77,7 @@ textarea{min-height:110px;resize:vertical}
 <script>
 // Numéro WhatsApp qui reçoit les fiches, format international sans « + » (ex. "22212345678"). Laisser vide pour choisir le contact à chaque envoi.
 var WA_NUMBER="";
+var CLD="https://res.cloudinary.com/kzluya6g/image/upload/",CLD_T=CLD+"w_700,q_auto/";
 var SITE_URL="https://ahmedelhadi20200-dotcom.github.io/anesp-nktt/";
 var SITES=[
 {id:"s01",n:"École Cheikh Med El Hafedh (redéployée à Lemrabot Sidi Mahmoud)",z:"Arafat",e:"E2PC",t:"34162252",i:"Extension d’un bloc de 6 SDC",c:[18.060792,-15.943324],r:"30/10/2026",d:.029,av:0,s:"Non entamé",o:"Espace suffisant pour 6 SDC."},
@@ -115,7 +116,7 @@ function render(){
 }
 function site(){return SITES.filter(function(x){return x.id===openId})[0]}
 function openSite(id){
-  openId=id;gps=null;photos=[];var s=site(),c=cur(s),today=new Date().toISOString().slice(0,10);
+  openId=id;gps=null;photos=[];pend=null;var s=site(),c=cur(s),today=new Date().toISOString().slice(0,10);
   $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><p class="info">'+esc(s.e)+' – <a href="tel:'+s.t+'">'+s.t.replace(/(\d\d)(?=\d)/g,"$1 ")+'</a></p><p class="info">'+esc(s.i)+'</p><p class="info">Remise de site : '+s.r+'</p><div class="base">Situation au 06/11/2026 : '+pc(s.av)+' – '+esc(s.s)+'\n'+esc(s.o)+'</div>'+
   '<label for="f_av">Avancement global (%)</label><input id="f_av" type="number" inputmode="numeric" min="0" max="100" value="'+Math.round(c.av*100)+'">'+
   '<div class="two"><div><label for="f_et">État du chantier</label><select id="f_et">'+ETATS.map(function(e){return '<option'+(e===c.s?' selected':'')+'>'+e+'</option>'}).join("")+'</select></div><div><label for="f_ef">Ouvriers présents</label><input id="f_ef" type="number" inputmode="numeric" min="0"></div></div>'+
@@ -133,23 +134,24 @@ function showReport(r){
   var s=SITES.filter(function(x){return x.id===r.i})[0];if(!s)return;
   repId=s.id;var av=Math.max(0,Math.min(100,Number(r.a)||0));
   var d=r.d?r.d.split("-").reverse().join("/"):"non renseignée";
+  var ph="";(Array.isArray(r.p)?r.p:[]).slice(0,8).forEach(function(q){if(typeof q==="string"&&/^v\d+\/[A-Za-z0-9_\/.-]+$/.test(q)){ph+='<a href="'+CLD+q+'" target="_blank" rel="noopener"><img src="'+CLD_T+q+'" alt="Photo du chantier" loading="lazy"></a>'}});
   $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><p class="info">'+esc(s.e)+' – '+esc(s.z)+'</p>'+
   '<div class="top" style="margin-top:14px"><div class="nm">Avancement</div><div class="pct">'+av+' %</div></div><div class="bar"><i style="width:'+av+'%"></i></div>'+
   '<div class="meta"><span class="tag '+tagCls(r.e)+'">'+esc(r.e)+'</span></div>'+
   '<div class="base">Ouvriers présents : '+esc(r.w||"non renseigné")+'\nDate de visite : '+esc(d)+'\nTechnicien : '+esc(r.b)+'\nObservations : '+esc(r.o||"néant")+'</div>'+
-  '<p class="note">Les photos de cette visite sont dans le message du groupe, juste au-dessus du lien.</p>'+
+  (ph?'<div class="ph">'+ph+'</div>':'')+
   '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn ghost" id="close" type="button">Fermer</button>';
   $("sheet").classList.add("open");
 }
 function err(t){$("msg").textContent=t;alert(t)}
-function message(){
+function message(paths){
   var s=site(),av=parseFloat($("f_av").value);
   if(isNaN(av)||av<0||av>100){err("L’avancement doit être entre 0 et 100.");return null}
   if(!$("f_by").value.trim()){err("Indiquez le nom du technicien avant d’envoyer.");return null}
   LS.set("nktt_tech",$("f_by").value.trim());
   var d=$("f_dt").value.split("-").reverse().join("/");
   var L=["*ANESP – NKTT Sud – Fiche de suivi*","Chantier : "+s.n,"Entreprise : "+s.e,"Zone : "+s.z,"Date de visite : "+d,"Avancement : "+Math.round(av)+" %","État : "+$("f_et").value,"Ouvriers présents : "+($("f_ef").value||"non renseigné"),"Technicien : "+$("f_by").value.trim(),"Observations : "+($("f_ob").value.trim()||"néant")];
-  L.push("Voir la fiche : "+SITE_URL+"#r="+enc({i:s.id,a:Math.round(av),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim()}));
+  L.push("Voir la fiche : "+SITE_URL+"#r="+enc({i:s.id,a:Math.round(av),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim(),p:paths||[]}));
   return L.join("\n");
 }
 function mark(){
@@ -158,27 +160,30 @@ function mark(){
   render();
 }
 var pend=null;
-function sendWA(){
-  var m=message();if(!m)return;
-  var T="ANESP – NKTT Sud";
-  if(photos.length&&navigator.canShare&&navigator.canShare({files:photos})){
-    navigator.share({files:photos,title:T}).then(function(){
-      pend=m;var b=$("wa");b.textContent="Étape 2 : envoyer le message";b.id="wa2";
-      $("msg").textContent="Photos envoyées. Touchez maintenant « Étape 2 » pour envoyer le message.";
-    }).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message » puis collez-le dans le groupe."});
-    return;
-  }
+function upload(f){
+  var fd=new FormData();fd.append("file",f);fd.append("upload_preset","anesp2026");
+  return fetch("https://api.cloudinary.com/v1_1/kzluya6g/image/upload",{method:"POST",body:fd}).then(function(r){if(!r.ok)throw new Error("up");return r.json()}).then(function(j){var u=j.secure_url,i=u.indexOf("/upload/");if(i<0)throw new Error("up");return u.slice(i+8)});
+}
+function busy(b){var x=document.querySelectorAll("#wa,#cp");for(var i=0;i<x.length;i++)x[i].disabled=b}
+function doShare(m){
   if(navigator.share){
-    navigator.share({text:m,title:T}).then(function(){mark();if(photos.length)alert("Le message est parti. Les photos doivent être envoyées à la main dans WhatsApp.")}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
+    navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
     return;
   }
-  if(photos.length)alert("Les photos ne peuvent pas être jointes automatiquement sur cet appareil. Après l’ouverture de WhatsApp, joignez-les à la main.");
   mark();window.location.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m);
 }
-function sendMsg(){
-  if(!pend)return;
-  navigator.share({text:pend,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
+function sendWA(){
+  var v=message([]);if(!v)return;
+  if(!photos.length){doShare(v);return}
+  busy(true);var n=photos.length,done=0;
+  $("msg").textContent="Envoi des photos… 0/"+n;
+  Promise.all(photos.map(function(f){return upload(f).then(function(q){done++;$("msg").textContent="Envoi des photos… "+done+"/"+n;return q})})).then(function(paths){
+    busy(false);pend=message(paths);
+    var b=$("wa");b.textContent="Photos prêtes : partager dans WhatsApp";b.id="wa2";
+    $("msg").textContent="Touchez maintenant le bouton pour partager dans le groupe.";
+  }).catch(function(){busy(false);$("msg").textContent="Envoi des photos impossible. Vérifiez le réseau et réessayez."});
 }
+function sendMsg(){if(pend)doShare(pend)}
 function shrink(f,n){
   return new Promise(function(res){
     var img=new Image(),u=URL.createObjectURL(f);
@@ -193,7 +198,8 @@ function shrink(f,n){
   });
 }
 function addPhotos(list){
-  var arr=[].slice.call(list),i=photos.length;
+  var arr=[].slice.call(list).slice(0,Math.max(0,8-photos.length)),i=photos.length;
+  var w=$("wa2");if(w){w.id="wa";w.textContent="Envoyer sur WhatsApp"}pend=null;
   $("phc").textContent="Préparation des photos…";
   Promise.all(arr.map(function(f,j){return shrink(f,i+j+1)})).then(function(r){
     r.forEach(function(x){if(x)photos.push(x)});
@@ -201,7 +207,8 @@ function addPhotos(list){
   });
 }
 function copyMsg(){
-  var m=message();if(!m)return;
+  if(photos.length&&!pend){$("msg").textContent="Touchez d’abord « Envoyer sur WhatsApp » pour préparer les photos.";return}
+  var m=pend||message([]);if(!m)return;
   function ok(){mark();$("msg").textContent="Message copié. Collez-le dans WhatsApp."}
   function fb(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("msg").textContent="Copie impossible."}document.body.removeChild(t)}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else{fb()}
