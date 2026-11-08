@@ -5,175 +5,160 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ANESP – NKTT Sud, fiche de suivi</title>
 <style>
-
-:root{--bg:#eef1ef;--card:#fff;--ink:#17262b;--mute:#5d6f74;--line:#d5dcda;--acc:#0f6b73;--accs:#d9ecee;--ok:#2f7d4f;--warn:#b45309;--bad:#b42318;--bar:#dfe6e4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181b;--card:#182327;--ink:#e6eeee;--mute:#93a6aa;--line:#2b3a3e;--acc:#5cc2cb;--accs:#17383c;--ok:#6cc58d;--warn:#f0a04b;--bad:#f28b82;--bar:#26353a}}
-:root[data-theme="dark"]{--bg:#10181b;--card:#182327;--ink:#e6eeee;--mute:#93a6aa;--line:#2b3a3e;--acc:#5cc2cb;--accs:#17383c;--ok:#6cc58d;--warn:#f0a04b;--bad:#f28b82;--bar:#26353a}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--bg:#f3f0ea;--card:#faf9f6;--ink:#1f2f2b;--mute:#6b7a74;--line:#dfe3dc;--g:#345c4c;--gs:#e4ede7;--red:#a8453a;--reds:#f6e9e5;color-scheme:light}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif}
-.wrap{max-width:720px;margin:0 auto;padding:16px}
-h1{font-size:1.35rem;margin:0 0 2px;letter-spacing:-.01em}
-.sub{color:var(--mute);font-size:.9rem;margin:0 0 14px}
-.global{background:var(--acc);color:#fff;border-radius:14px;padding:16px;margin-bottom:14px}
-:root[data-theme="dark"] .global,:root:not([data-theme="light"]) .global{color:#06272b}
-.global .big{font-size:2.4rem;font-weight:700;line-height:1}
-.global .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
-.global small{opacity:.9}
-.gbar{height:8px;border-radius:4px;background:rgba(255,255,255,.3);margin-top:12px;overflow:hidden}
-.gbar i{display:block;height:100%;background:#fff}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
-.tabs button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;font:inherit;font-size:.88rem}
-.tabs button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
-:root[data-theme="dark"] .tabs button[aria-pressed="true"],:root:not([data-theme="light"]) .tabs button[aria-pressed="true"]{color:#06272b}
-.site{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;color:inherit;font:inherit;cursor:pointer}
-.site:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.nm{font-weight:650}
-.co{color:var(--mute);font-size:.86rem}
-.pct{font-weight:700;font-size:1.15rem;white-space:nowrap}
-.bar{position:relative;height:9px;background:var(--bar);border-radius:5px;margin:10px 0 6px}
-.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--acc)}
-.bar b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55}
-.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.8rem;color:var(--mute);align-items:center}
-.tag{border-radius:6px;padding:1px 8px;font-size:.78rem;font-weight:600;background:var(--accs);color:var(--acc)}
-.tag.stop{background:rgba(180,35,24,.12);color:var(--bad)}
-.tag.none{background:var(--bar);color:var(--mute)}
-.tag.late{background:rgba(180,83,9,.14);color:var(--warn)}
-.tag.done{background:rgba(47,125,79,.14);color:var(--ok)}
-.upd{font-size:.76rem;color:var(--mute);margin-top:4px}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:20}
-.sheet.open{display:block}
-.panel{position:absolute;left:0;right:0;bottom:0;max-height:94%;overflow-y:auto;background:var(--card);border-radius:18px 18px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
-.panel h2{margin:0 0 2px;font-size:1.15rem}
-.info{font-size:.85rem;color:var(--mute);margin:2px 0}
-.info a{color:var(--acc)}
-label{display:block;font-weight:600;font-size:.88rem;margin:14px 0 5px}
-input,select,textarea{width:100%;font:inherit;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
-textarea{min-height:110px;resize:vertical}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{width:100%;margin-top:16px;border:0;border-radius:12px;padding:14px;background:var(--acc);color:#fff;font:inherit;font-weight:700}
-:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#06272b}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);margin-top:8px;font-weight:600}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Avenir Next","Segoe UI",system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.hd{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{width:46px;height:46px;border-radius:12px;background:var(--g);display:grid;place-items:center;font-size:1.4rem}
+.hd small{display:block;font-size:.7rem;letter-spacing:.12em;color:var(--mute);font-weight:700}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+.hero{background:var(--g);color:#f5efe2;border-radius:22px;padding:20px;margin-bottom:12px}
+.hero small{font-size:.7rem;letter-spacing:.14em;font-weight:700;color:#e8d6ae}
+.hero h1{font-size:1.9rem;line-height:1.05;margin:8px 0 6px;letter-spacing:-.02em}
+.hero p{margin:0;opacity:.85}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.st.g{background:var(--gs)}
+.st span{color:var(--mute);font-size:.9rem}
+.st b{display:block;font-size:2.2rem;line-height:1.1;margin-top:4px}
+.alert{background:var(--reds);color:var(--red);border:1px solid #ecc9c1;border-radius:14px;padding:12px 14px;font-weight:700;margin-bottom:10px}
+input,select,textarea{font:inherit;width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+textarea{min-height:90px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 14px}
+.tabs button{flex:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--mute);padding:10px 12px;border-radius:12px}
+.tabs button[aria-pressed=true]{background:var(--gs);color:var(--g)}
+.tabs em{font-style:normal;background:#ecece6;border-radius:8px;padding:1px 8px;margin-left:6px;font-size:.85rem}
+.site{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+.tg{display:inline-block;border-radius:10px;padding:5px 11px;font-size:.85rem;font-weight:700;background:var(--gs);color:var(--g)}
+.tg.stop,.tg.late{background:var(--reds);color:var(--red)}
+.tg.none{background:#ecece6;color:var(--mute)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.site h3{margin:10px 0 2px;font-size:1.2rem}
+.mu{color:var(--mute);font-size:.92rem;margin-top:3px}
+.mu b{color:var(--ink)}
+.bar{height:8px;background:#e6e6df;border-radius:5px;margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--g)}
+.btn{width:100%;border:0;border-radius:16px;padding:16px;background:var(--g);color:#fff;font:inherit;font-weight:700;margin-top:10px}
+.btn.gh{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .btn:disabled{opacity:.5}
-.base{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:.84rem;color:var(--mute);margin-top:10px;white-space:pre-line}
-.note{font-size:.82rem;color:var(--mute);margin:12px 0}
-.msg{font-size:.85rem;margin-top:10px;min-height:1.2em}
-.foot{display:flex;gap:8px;margin:6px 0 28px}
-.foot button{flex:1}
-
-.sub2{font-size:.85rem;color:var(--mute);margin:8px 0 0}.btn.wa{background:#1f9d55;color:#fff!important}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ph{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.ph img{width:100%;border-radius:10px;display:block;background:var(--bar)}.sent{font-size:.76rem;color:var(--ok);margin-top:4px}
+.sheet{position:fixed;inset:0;background:rgba(20,30,26,.5);display:none;z-index:20}
+.sheet.open{display:block}
+.panel{position:absolute;left:0;right:0;bottom:0;max-height:95%;overflow-y:auto;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 16px calc(26px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+.panel h2{margin:0 0 2px;font-size:1.2rem}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#e9e7df;border-radius:14px;padding:4px;margin:12px 0}
+.seg button{border:0;background:transparent;border-radius:11px;padding:11px;font:inherit;font-weight:700;color:var(--mute)}
+.seg button.on{background:#fff;color:var(--g)}
+label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+.ov{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
+.ov input[type=range]{padding:0;margin-top:6px}
+.ov select{width:auto}
+.ov b{color:var(--g)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gl{background:var(--g);color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;font-weight:700;margin:10px 0}
+.msg{font-size:.88rem;margin-top:10px;min-height:1.2em}
+.note{font-size:.85rem;color:var(--mute)}
+.ph{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.ph img{width:100%;border-radius:12px;display:block}
 </style>
 </head>
 <body>
+<div class="hd"><div class="logo">🏫</div><div><small>ING. AHMED EL HADY – ANESP</small><b>NKTT Sud – Suivi des chantiers</b></div></div>
 <div class="wrap">
-  <p class="sub" style="margin:0 0 6px;font-weight:600;color:var(--acc)">Ing. Ahmed El Hady – ANESP</p>
-  <h1>NKTT Sud – Fiche de suivi des chantiers</h1>
-  <p class="sub">Choisissez le chantier, remplissez la fiche, ajoutez les photos, puis envoyez-la sur WhatsApp.</p>
-  <div class="global"><div class="row"><div><small>Avancement global</small><div class="big" id="gpct">–</div></div><small id="gcount"></small></div><div class="gbar"><i id="gbar" style="width:0"></i></div></div>
+  <div class="hero"><small>SITUATION DU PORTEFEUILLE</small><h1>Choisissez un chantier</h1><p>Touchez une carte pour saisir la visite.</p></div>
+  <div class="stats" id="stats"></div>
+  <div id="alert"></div>
+  <input id="q" type="search" placeholder="Rechercher un chantier" aria-label="Rechercher un chantier">
+  <div class="tabs" id="tabs"></div>
   <div id="list"></div>
 </div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 <script>
-// Numéro WhatsApp qui reçoit les fiches, format international sans « + » (ex. "22212345678"). Laisser vide pour choisir le contact à chaque envoi.
-var WA_NUMBER="";
-var CLD="https://res.cloudinary.com/kzluya6g/image/upload/",CLD_T=CLD+"w_700,q_auto/";
-var SITE_URL="https://ahmedelhadi20200-dotcom.github.io/anesp-nktt/";
+var CLD="https://res.cloudinary.com/kzluya6g/image/upload/",CLD_T=CLD+"w_700,q_auto/",CLD_RAW="https://res.cloudinary.com/kzluya6g/raw/upload/";
+var SITE_URL="https://ahmedelhadi20200-dotcom.github.io/anesp-nktt/",WA_NUMBER="";
 var SITES=[
-{id:"s01",k:"Aissata Alassane Abdou Dem",n:"École Cheikh Med El Hafedh (redéployée à Lemrabot Sidi Mahmoud)",z:"Arafat",e:"E2PC",t:"34162252",i:"Extension d’un bloc de 6 SDC",c:[18.060792,-15.943324],r:"30/10/2026",d:.029,av:0,s:"Non entamé",o:"Espace suffisant pour 6 SDC."},
-{id:"s02",k:"Amadou Youba Diakité",n:"École en face du quartier PK 15",z:"El Mina – PK 15",e:"EL BARAKA",t:"22615125",i:"12 SDC + administration + toilettes + loge + clôture",c:[17.952359,-15.980966],r:"10/09/2026",d:.2375,av:.16,s:"Arrêté",o:"Travaux arrêtés par le maître d’ouvrage après le coulage des semelles (proximité des éoliennes)."},
-{id:"s03",k:"Ahmed Abdellahi Yahye Diouf",n:"École Hay El Wehda",z:"Riyad – Tarhil 17",e:"EL BARAKA",t:"22615125",i:"12 SDC + administration + toilettes + loge + clôture",c:[17.9984,-15.937424],r:"17/09/2026",d:.2083,av:.10,s:"En cours",o:"Fondations du bloc 1 achevées. Longrines du bloc 2 et semelles du bloc administratif en cours. Soubassement du logement du directeur en cours."},
-{id:"s04",k:"Mohahamed El Arby Matalla",n:"Collège SANFICH",z:"El Mina – Dar El Beidha",e:"CHADAD GROUP",t:"36308180",i:"Collège 8 SDC + annexes",c:[18.012797,-15.997125],r:"14/09/2026",d:.2208,av:.42,s:"En cours",o:"Élévation en cours (classes, bloc technique, administration, logement). Chaînage bas de clôture achevé."},
-{id:"s05",k:"Issa Ousmane Thiam",n:"École Djambour",z:"El Mina – PK 15",e:"CHADAD GROUP",t:"36308180",i:"École 12 SDC + annexes",c:[17.952359,-15.980966],r:"30/10/2026",d:0,av:0,s:"Non entamé",o:"Emprise L=125 m, l=50 m, suffisante."},
-{id:"s06",k:"Boubakar Mamadou Sow - Abdel kader",n:"École Jedou Saleck",z:"Riyad",e:"GHAZALI",t:"36303787",i:"8 SDC + administration + toilettes + loge + clôture",c:[18.010823,-15.955792],r:"05/09/2026",d:.2583,av:.38,s:"En cours",o:"Chaînage haut en cours pour le bloc de classes. Emprise restreinte."},
-{id:"s07",k:"Mariyata Harouna Doucouré",n:"École Mohamed Ibrahim",z:"Riyad – Tarhil 16",e:"GHAZALI",t:"37303787",i:"12 SDC + administration + toilettes + loge + clôture",c:[18.007776,-15.946638],r:"05/09/2026",d:.2583,av:0,s:"Non entamé",o:"Espace suffisant."},
-{id:"s08",k:"Amadou Youba Diakité",n:"École Abdallahi Ibn Messaoud",z:"Riyad",e:"E2PC",t:"34162252",i:"Extension d’un bloc de 6 SDC",c:[17.933657,-15.981071],r:"12/08/2026",d:.3583,av:.08,s:"Arrêté",o:"Fouilles des semelles en cours. Chantier à l’arrêt depuis 15 jours. Emprise très limitée."},
-{id:"s09",k:"Salimata Moussa Sow",n:"Collège 2",z:"Riyad",e:"HYBAT-TP",t:"27508908",i:"Extension d’un bloc de 6 SDC",c:[18.014953,-15.9705553],r:"01/10/2026",d:.15,av:.12,s:"En cours",o:"Coulage des semelles en cours."},
-{id:"s10",k:"Diarry Salif Kaita",n:"École Arafat 2",z:"El Mina – Netegue",e:"HYBAT-TP",t:"27508908",i:"Construction d’un mur de clôture",c:[18.061558,-15.997708],r:"01/10/2026",d:.15,av:0,s:"Non entamé",o:"Remise de site effectuée."},
-{id:"s11",k:"Brahim Beye",n:"Collège Hay Samia",z:"El Mina – Tarhil PK 13",e:"CECTP",t:"36350720",i:"Collège 8 SDC + annexes",c:[17.969442,-15.976903],r:"30/10/2026",d:.029,av:0,s:"Non entamé",o:"Étude géotechnique en cours."},
-{id:"s12",k:"Diarry Salif Kaita",n:"Lycée Hay Samia",z:"El Mina – Dar El Beida",e:"SOMACOR",t:"22443054",i:"Lycée 8 SDC + annexes",c:[18.06118,-15.977787],r:"21/10/2026",d:.0667,av:0,s:"Non entamé",o:"Remise de site effectuée."},
-{id:"s13",k:"Khadi Cheffa - oum kreine",n:"École El Velouja",z:"Arafat",e:"SOMACOR",t:"22443054",i:"École 12 SDC + annexes",c:[18.046593,-15.948466],r:"22/09/2026",d:.1875,av:.12,s:"En cours",o:"Soubassement du bloc de 6 classes en cours. Emprise L=80 m, l=50 m."},
-{id:"s14",k:"Cheikh Bay Enahoui",n:"École Oum El Mouminine",z:"Arafat",e:"ITKAN POUR L’ING",t:"30744898",i:"Construction de 8 SDC et mur de clôture",c:[18.07361,-15.95278],r:"14/08/2026",d:.35,av:.65,s:"En cours",o:"Élévation à l’étage du bloc de 8 classes et du mur de clôture."}
+{id:"s01",n:"École Cheikh Med El Hafedh (redéployée à Lemrabot Sidi Mahmoud)",z:"Arafat",e:"E2PC",k:"Aissata Alassane Abdou Dem",i:"Extension d’un bloc de 6 SDC",d:.029,av:0,s:"Non entamé",y:"ext"},
+{id:"s02",n:"École en face du quartier PK 15",z:"El Mina – PK 15",e:"EL BARAKA",k:"Amadou Youba Diakité",i:"12 SDC + administration + toilettes + loge + clôture",d:.2375,av:.16,s:"Arrêté",y:"ecole"},
+{id:"s03",n:"École Hay El Wehda",z:"Riyad – Tarhil 17",e:"EL BARAKA",k:"Ahmed Abdellahi Yahye Diouf",i:"12 SDC + administration + toilettes + loge + clôture",d:.2083,av:.10,s:"En cours",y:"ecole"},
+{id:"s04",n:"Collège SANFICH",z:"El Mina – Dar El Beidha",e:"CHADAD GROUP",k:"Mohahamed El Arby Matalla",i:"Collège 8 SDC + annexes",d:.2208,av:.42,s:"En cours",y:"coll"},
+{id:"s05",n:"École Djambour",z:"El Mina – PK 15",e:"CHADAD GROUP",k:"Issa Ousmane Thiam",i:"École : 2 blocs de 6 SDC + annexes",d:0,av:0,s:"Non entamé",y:"ecole"},
+{id:"s06",n:"École Jedou Saleck",z:"Riyad",e:"GHAZALI",k:"Boubakar Mamadou Sow - Abdel kader",i:"Extension : un bloc de 8 SDC",d:.2583,av:.38,s:"En cours",y:"ext8"},
+{id:"s07",n:"École Mohamed Ibrahim",z:"Riyad – Tarhil 16",e:"GHAZALI",k:"Mariyata Harouna Doucouré",i:"12 SDC + administration + toilettes + loge + clôture",d:.2583,av:0,s:"Non entamé",y:"ecole"},
+{id:"s08",n:"École Abdallahi Ibn Messaoud",z:"Riyad",e:"E2PC",k:"Amadou Youba Diakité",i:"Extension d’un bloc de 6 SDC",d:.3583,av:.08,s:"Arrêté",y:"ext"},
+{id:"s09",n:"Collège 2",z:"Riyad",e:"HYBAT-TP",k:"Salimata Moussa Sow",i:"Extension d’un bloc de 6 SDC",d:.15,av:.12,s:"En cours",y:"ext"},
+{id:"s10",n:"École Arafat 2",z:"El Mina – Netegue",e:"HYBAT-TP",k:"Diarry Salif Kaita",i:"Construction d’un mur de clôture",d:.15,av:0,s:"Non entamé",y:"mur"},
+{id:"s11",n:"Collège Hay Samia",z:"El Mina – Tarhil PK 13",e:"CECTP",k:"Brahim Beye",i:"Collège 8 SDC + annexes",d:.029,av:0,s:"Non entamé",y:"coll"},
+{id:"s12",n:"Lycée Hay Samia",z:"El Mina – Dar El Beida",e:"SOMACOR",k:"Diarry Salif Kaita",i:"Lycée 8 SDC + annexes",d:.0667,av:0,s:"Non entamé",y:"coll"},
+{id:"s13",n:"École El Velouja",z:"Arafat",e:"SOMACOR",k:"Khadi Cheffa - oum kreine",i:"École : 2 blocs de 6 SDC + annexes",d:.1875,av:.12,s:"En cours",y:"ecole"},
+{id:"s14",n:"École Oum El Mouminine",z:"Arafat",e:"ITKAN POUR L’ING",k:"Cheikh Bay Enahoui",i:"Construction de 8 SDC et mur de clôture",d:.35,av:.65,s:"En cours",y:"b8"}
 ];
-var ETATS=["Non entamé","En cours","Arrêté","Terminé"];
+var OV={ext:["Bloc de 6 salles de classe"],ext8:["Bloc de 8 salles de classe"],ecole:["Bloc de 6 salles de classe n°1","Bloc de 6 salles de classe n°2","Logement du directeur","Administration","Bloc de latrines n°1","Bloc de latrines n°2","Mur de clôture","Papeterie","Entrée principale","Logement du gardien"],coll:["Bloc de 8 salles de classe","Bloc technique","Logement du directeur","Administration","Bloc de latrines n°1","Bloc de latrines n°2","Mur de clôture","Entrée principale","Logement du gardien","Papeterie"],mur:["Mur de clôture"],b8:["Bloc de 8 salles de classe","Mur de clôture"]};
+var MAT=["Ciment","Acier (fer)","Sable","Gravier","Agglos (parpaings)","Eau","Bois de coffrage"],AP=["Disponible","Faible","Rupture"],ETATS=["Non entamé","En cours","Arrêté","Terminé"];
 var $=function(i){return document.getElementById(i)};
 var LS={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-var sent={};try{sent=JSON.parse(LS.get("nktt_sent")||"{}")}catch(e){}
-var last={};try{last=JSON.parse(LS.get("nktt_last")||"{}")}catch(e){}
-function cur(s){var m=last[s.id];return m?{av:m.av,s:m.s}:{av:s.av,s:s.s}}
-var openId=null,gps=null,photos=[];
+var last={};try{last=JSON.parse(LS.get("nktt_last3")||"{}")}catch(e){}
+var openId=null,photos=[],pend=null,filt="all",repId=null;
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function pc(x){return Math.round(x*100)+" %"}
-function tagCls(e){return e==="Arrêté"?"stop":e==="Non entamé"?"none":e==="Terminé"?"done":""}
+function mean(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:0}
+function site(id){return SITES.filter(function(x){return x.id===(id||openId)})[0]}
+function cur(s){var m=last[s.id];return m?{av:mean(m.ov)/100,s:m.s}:{av:s.av,s:s.s}}
+function tc(e){return e==="Arrêté"?" stop":e==="Non entamé"?" none":""}
 function render(){
-  var t=0,n={};SITES.forEach(function(s){var c=cur(s);t+=c.av;n[c.s]=(n[c.s]||0)+1});
-  var g=t/SITES.length;$("gpct").textContent=(g*100).toFixed(1).replace(".",",")+" %";$("gbar").style.width=(g*100)+"%";
-  $("gcount").textContent=SITES.length+" chantiers – "+(n["En cours"]||0)+" en cours, "+(n["Arrêté"]||0)+" arrêtés, "+(n["Non entamé"]||0)+" non entamés";
-  $("list").innerHTML=SITES.map(function(s){
-    var c=cur(s),late=(s.d-c.av)>=.15;
-    return '<button type="button" class="site" data-id="'+s.id+'"><div class="top"><div><div class="nm">'+esc(s.n)+'</div><div class="co">'+esc(s.e)+' – '+esc(s.z)+'</div></div><div class="pct">'+pc(c.av)+'</div></div><div class="bar"><i style="width:'+(c.av*100)+'%"></i><b style="left:'+Math.min(100,s.d*100)+'%"></b></div><div class="meta"><span class="tag '+tagCls(c.s)+'">'+esc(c.s)+'</span>'+(late?'<span class="tag late">Retard</span>':'')+'<span>Délai consommé '+pc(s.d)+'</span></div>'+(sent[s.id]?'<div class="sent">Dernier envoi : '+esc(sent[s.id])+'</div>':'')+'</button>';
-  }).join("");
+  var n={},t=0,late=0;
+  SITES.forEach(function(s){var c=cur(s);t+=c.av;n[c.s]=(n[c.s]||0)+1;if(s.d-c.av>=.15&&c.s!=="Terminé")late++});
+  $("stats").innerHTML='<div class="st g"><span>Avancement global</span><b>'+(t/SITES.length*100).toFixed(1).replace(".",",")+' %</b></div><div class="st"><span>En cours</span><b>'+(n["En cours"]||0)+'</b></div><div class="st"><span>Arrêtés</span><b>'+(n["Arrêté"]||0)+'</b></div><div class="st"><span>Non entamés</span><b>'+(n["Non entamé"]||0)+'</b></div>';
+  $("alert").innerHTML=late?'<div class="alert">⚠ '+late+' chantier'+(late>1?'s':'')+' en retard</div>':'';
+  $("tabs").innerHTML=[["all","Tous",SITES.length],["En cours","En cours",n["En cours"]||0],["Arrêté","Arrêtés",n["Arrêté"]||0],["Non entamé","Non entamés",n["Non entamé"]||0]].map(function(f){return '<button type="button" data-f="'+f[0]+'" aria-pressed="'+(filt===f[0])+'">'+f[1]+'<em>'+f[2]+'</em></button>'}).join("");
+  var q=$("q").value.toLowerCase();
+  $("list").innerHTML=SITES.filter(function(s){var c=cur(s);return(filt==="all"||c.s===filt)&&(s.n+" "+s.z+" "+s.e).toLowerCase().indexOf(q)>-1}).map(function(s){
+    var c=cur(s);
+    return '<div class="site"><div class="row"><span class="tg'+tc(c.s)+'">'+esc(c.s)+'</span>'+((s.d-c.av>=.15&&c.s!=="Terminé")?'<span class="tg late">Retard</span>':'')+'</div><h3>'+esc(s.n)+'</h3><div class="mu">'+esc(s.z)+'</div><div class="mu">Entreprise <b>'+esc(s.e)+'</b></div><div class="mu">Technicien <b>'+esc(s.k)+'</b></div><div class="bar"><i style="width:'+c.av*100+'%"></i></div><div class="row"><b>'+pc(c.av)+'</b><span class="mu">Délai consommé '+pc(s.d)+'</span></div><button class="btn go" type="button" data-id="'+s.id+'">Saisir la visite →</button></div>';
+  }).join("")||'<p class="note">Aucun chantier.</p>';
 }
-function site(){return SITES.filter(function(x){return x.id===openId})[0]}
 function openSite(id){
-  openId=id;gps=null;photos=[];pend=null;var s=site(),c=cur(s),today=new Date().toISOString().slice(0,10);
-  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><p class="info">'+esc(s.e)+' – <a href="tel:'+s.t+'">'+s.t.replace(/(\d\d)(?=\d)/g,"$1 ")+'</a></p><p class="info">'+esc(s.i)+'</p><p class="info">Remise de site : '+s.r+'</p><div class="base">Situation au 06/11/2026 : '+pc(s.av)+' – '+esc(s.s)+'\n'+esc(s.o)+'</div>'+
-  '<label for="f_av">Avancement global (%)</label><input id="f_av" type="number" inputmode="numeric" min="0" max="100" value="'+Math.round(c.av*100)+'">'+
-  '<div class="two"><div><label for="f_et">État du chantier</label><select id="f_et">'+ETATS.map(function(e){return '<option'+(e===c.s?' selected':'')+'>'+e+'</option>'}).join("")+'</select></div><div><label for="f_ef">Ouvriers présents</label><input id="f_ef" type="number" inputmode="numeric" min="0"></div></div>'+
-  '<div class="two"><div><label for="f_dt">Date de visite</label><input id="f_dt" type="date" value="'+today+'"></div><div><label for="f_by">Technicien</label><input id="f_by" type="text" autocomplete="name" value="'+esc(s.k||"")+'"></div></div>'+
-  '<label for="f_ob">Observations (travaux en cours, problèmes)</label><textarea id="f_ob"></textarea>'+
-  '<label for="f_ph">Photos du chantier</label><input id="f_ph" type="file" accept="image/*" multiple><div class="info" id="phc"></div>'+
-  '<button class="btn wa" id="wa" type="button">Envoyer sur WhatsApp</button>'+
-  '<div class="row2"><button class="btn ghost" id="cp" type="button">Copier le message</button><button class="btn ghost" id="close" type="button">Fermer</button></div><div class="msg" id="msg" role="status"></div>';
+  openId=id;photos=[];pend=null;
+  var s=site(),m=last[id],names=OV[s.y],ov=m?m.ov:names.map(function(){return 0}),today=new Date().toISOString().slice(0,10),et=m?m.s:s.s;
+  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><div class="mu">'+esc(s.e)+' – '+esc(s.z)+'</div><div class="mu">'+esc(s.i)+'</div><div class="mu">Situation de référence : '+pc(s.av)+'</div>'+
+  '<div class="seg"><button type="button" class="on" data-sec="av">Avancement</button><button type="button" data-sec="ap">Approvisionnement</button></div>'+
+  '<div id="sec_av">'+names.map(function(o,j){return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b id="ovl'+j+'">'+ov[j]+' %</b></div><input class="ovr" type="range" min="0" max="100" step="5" value="'+ov[j]+'" aria-label="'+esc(o)+'"></div>'}).join("")+
+  '<div class="gl"><span>Avancement global</span><span id="gl">'+Math.round(mean(ov))+' %</span></div>'+
+  '<div class="two"><div><label for="f_et">État du chantier</label><select id="f_et">'+ETATS.map(function(e){return '<option'+(e===et?' selected':'')+'>'+e+'</option>'}).join("")+'</select></div><div><label for="f_ef">Ouvriers présents</label><input id="f_ef" type="number" inputmode="numeric" min="0"></div></div>'+
+  '<label for="f_ob">Observations (travaux en cours, problèmes)</label><textarea id="f_ob"></textarea></div>'+
+  '<div id="sec_ap" style="display:none">'+MAT.map(function(x,j){var v=m&&m.ap?m.ap[j]:0;return '<div class="ov"><div class="row"><span>'+x+'</span><select class="mat" aria-label="'+x+'">'+AP.map(function(a,k){return '<option value="'+k+'"'+(k===v?' selected':'')+'>'+a+'</option>'}).join("")+'</select></div></div>'}).join("")+
+  '<label for="f_oa">Observations sur l’approvisionnement</label><textarea id="f_oa"></textarea></div>'+
+  '<div class="two"><div><label for="f_dt">Date de visite</label><input id="f_dt" type="date" value="'+today+'"></div><div><label for="f_by">Technicien</label><input id="f_by" type="text" value="'+esc(s.k)+'"></div></div>'+
+  '<label for="f_ph">Photos du chantier (8 maximum)</label><input id="f_ph" type="file" accept="image/*" multiple><div class="note" id="phc"></div>'+
+  '<button class="btn" id="wa" type="button">Envoyer sur WhatsApp</button><div class="two"><button class="btn gh" id="cp" type="button">Copier le message</button><button class="btn gh" id="close" type="button">Fermer</button></div><div class="msg" id="msg" role="status"></div>';
   $("sheet").classList.add("open");
 }
-function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
-function dec(t){t=t.replace(/-/g,"+").replace(/_/g,"/");while(t.length%4)t+="=";return JSON.parse(decodeURIComponent(escape(atob(t))))}
-var repId=null;
-function showReport(r){
-  var s=SITES.filter(function(x){return x.id===r.i})[0];if(!s)return;
-  repId=s.id;var av=Math.max(0,Math.min(100,Number(r.a)||0));
-  var d=r.d?r.d.split("-").reverse().join("/"):"non renseignée";
-  var ph="";(Array.isArray(r.p)?r.p:[]).slice(0,8).forEach(function(q){if(typeof q==="string"&&/^v\d+\/[A-Za-z0-9_\/.-]+$/.test(q)){ph+='<a href="'+CLD+q+'" target="_blank" rel="noopener"><img src="'+CLD_T+q+'" alt="Photo du chantier" loading="lazy"></a>'}});
-  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><p class="info">'+esc(s.e)+' – '+esc(s.z)+'</p>'+
-  '<div class="top" style="margin-top:14px"><div class="nm">Avancement</div><div class="pct">'+av+' %</div></div><div class="bar"><i style="width:'+av+'%"></i></div>'+
-  '<div class="meta"><span class="tag '+tagCls(r.e)+'">'+esc(r.e)+'</span></div>'+
-  '<div class="base">Ouvriers présents : '+esc(r.w||"non renseigné")+'\nDate de visite : '+esc(d)+'\nTechnicien : '+esc(r.b)+'\nObservations : '+esc(r.o||"néant")+'</div>'+
-  (ph?'<div class="ph">'+ph+'</div>':'')+
-  '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn ghost" id="close" type="button">Fermer</button>';
-  $("sheet").classList.add("open");
+function vals(){return [].map.call(document.querySelectorAll(".ovr"),function(x){return +x.value})}
+function fiche(paths){
+  return {i:openId,ov:vals(),ap:[].map.call(document.querySelectorAll(".mat"),function(x){return +x.value}),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim(),oa:$("f_oa").value.trim(),p:paths||[]};
 }
 function err(t){$("msg").textContent=t;alert(t)}
-function fiche(paths){var s=site();return {i:s.id,a:Math.round(parseFloat($("f_av").value)),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim(),p:paths||[]}}
 function message(key){
-  var s=site(),av=parseFloat($("f_av").value);
-  if(isNaN(av)||av<0||av>100){err("L’avancement doit être entre 0 et 100.");return null}
-  if(!$("f_by").value.trim()){err("Indiquez le nom du technicien avant d’envoyer.");return null}
-  var d=$("f_dt").value.split("-").reverse().join("/");
-  var L=["*ANESP – NKTT Sud – Fiche de suivi*","Chantier : "+s.n,"Entreprise : "+s.e,"Zone : "+s.z,"Date de visite : "+d,"Avancement : "+Math.round(av)+" %","État : "+$("f_et").value,"Ouvriers présents : "+($("f_ef").value||"non renseigné"),"Technicien : "+$("f_by").value.trim(),"Observations : "+($("f_ob").value.trim()||"néant")];
+  var s=site(),f=fiche();
+  if(!f.b){err("Indiquez le nom du technicien avant d’envoyer.");return null}
+  var names=OV[s.y],bad=MAT.map(function(x,j){return AP[f.ap[j]]!=="Disponible"?x+" : "+AP[f.ap[j]].toLowerCase():""}).filter(Boolean);
+  var L=["*ANESP – NKTT Sud – Fiche de suivi*","Chantier : "+s.n,"Entreprise : "+s.e,"Zone : "+s.z,"Date de visite : "+f.d.split("-").reverse().join("/"),"Avancement global : "+Math.round(mean(f.ov))+" %","État : "+f.e,"Ouvrages :"];
+  names.forEach(function(o,j){L.push("• "+o+" : "+f.ov[j]+" %")});
+  L.push("Approvisionnement : "+(bad.length?bad.join(", "):"tout disponible"));
+  if(f.oa)L.push("Obs. approvisionnement : "+f.oa);
+  L.push("Ouvriers présents : "+(f.w||"non renseigné"),"Technicien : "+f.b,"Observations : "+(f.o||"néant"));
   if(key)L.push("Voir la fiche : "+SITE_URL+"#k="+key);
   return L.join("\n");
 }
-function mark(){
-  sent[openId]=new Date().toLocaleString("fr-FR");LS.set("nktt_sent",JSON.stringify(sent));
-  var a=parseFloat($("f_av").value);if(!isNaN(a)){last[openId]={av:a/100,s:$("f_et").value};LS.set("nktt_last",JSON.stringify(last))}
-  render();
-}
-var pend=null;
-var CLD_RAW="https://res.cloudinary.com/kzluya6g/raw/upload/";
+function mark(){var f=fiche();last[openId]={ov:f.ov,ap:f.ap,s:f.e};LS.set("nktt_last3",JSON.stringify(last));render()}
 function post(kind,fd){
   fd.append("upload_preset","anesp2026");
   return fetch("https://api.cloudinary.com/v1_1/kzluya6g/"+kind+"/upload",{method:"POST",body:fd}).then(function(r){if(!r.ok)throw new Error("up");return r.json()}).then(function(j){var u=j.secure_url,i=u.indexOf("/upload/");if(i<0)throw new Error("up");return u.slice(i+8)});
 }
 function upload(f){var fd=new FormData();fd.append("file",f);return post("image",fd)}
 function uploadJson(o){var fd=new FormData();fd.append("file",new Blob([JSON.stringify(o)],{type:"application/json"}),"fiche.json");return post("raw",fd)}
-function busy(b){var x=document.querySelectorAll("#wa,#cp");for(var i=0;i<x.length;i++)x[i].disabled=b}
+function busy(b){["wa","cp"].forEach(function(i){if($(i))$(i).disabled=b})}
 function resetPend(){pend=null;var w=$("wa2");if(w){w.id="wa";w.textContent="Envoyer sur WhatsApp"}}
 function doShare(m){
-  if(navigator.share){
-    navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});
-    return;
-  }
+  if(navigator.share){navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});return}
   mark();window.location.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m);
 }
 function sendWA(){
@@ -188,29 +173,6 @@ function sendWA(){
     $("msg").textContent="Touchez maintenant le bouton pour partager dans le groupe.";
   }).catch(function(){busy(false);$("msg").textContent="Envoi des photos impossible. Vérifiez le réseau et réessayez."});
 }
-function sendMsg(){if(pend)doShare(pend)}
-function shrink(f,n){
-  return new Promise(function(res){
-    var img=new Image(),u=URL.createObjectURL(f);
-    img.onload=function(){
-      var k=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement("canvas");
-      c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
-      c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);
-      c.toBlob(function(b){res(new File([b],"chantier_"+openId+"_"+n+".jpg",{type:"image/jpeg"}))},"image/jpeg",.75);
-    };
-    img.onerror=function(){URL.revokeObjectURL(u);res(null)};
-    img.src=u;
-  });
-}
-function addPhotos(list){
-  var arr=[].slice.call(list).slice(0,Math.max(0,8-photos.length)),i=photos.length;
-  resetPend();
-  $("phc").textContent="Préparation des photos…";
-  Promise.all(arr.map(function(f,j){return shrink(f,i+j+1)})).then(function(r){
-    r.forEach(function(x){if(x)photos.push(x)});
-    $("phc").textContent=photos.length+" photo"+(photos.length>1?"s":"")+" prête"+(photos.length>1?"s":"");
-  });
-}
 function copyMsg(){
   if(!pend){$("msg").textContent="Touchez d’abord « Envoyer sur WhatsApp » pour préparer la fiche.";return}
   var m=pend;
@@ -218,28 +180,58 @@ function copyMsg(){
   function fb(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("msg").textContent="Copie impossible."}document.body.removeChild(t)}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else{fb()}
 }
+function shrink(f,n){
+  return new Promise(function(res){
+    var img=new Image(),u=URL.createObjectURL(f);
+    img.onload=function(){var k=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){res(new File([b],"chantier_"+openId+"_"+n+".jpg",{type:"image/jpeg"}))},"image/jpeg",.75)};
+    img.onerror=function(){URL.revokeObjectURL(u);res(null)};
+    img.src=u;
+  });
+}
+function addPhotos(list){
+  var arr=[].slice.call(list).slice(0,Math.max(0,8-photos.length)),i=photos.length;resetPend();
+  $("phc").textContent="Préparation des photos…";
+  Promise.all(arr.map(function(f,j){return shrink(f,i+j+1)})).then(function(r){r.forEach(function(x){if(x)photos.push(x)});$("phc").textContent=photos.length+" photo"+(photos.length>1?"s":"")+" prête"+(photos.length>1?"s":"")});
+}
+function showReport(r){
+  var s=site(r.i);if(!s)return;repId=s.id;
+  var names=OV[s.y],ov=Array.isArray(r.ov)?r.ov:[],av=Math.round(mean(ov.map(Number)));
+  var rows=names.map(function(o,j){var v=Math.max(0,Math.min(100,Number(ov[j])||0));return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b>'+v+' %</b></div><div class="bar"><i style="width:'+v+'%"></i></div></div>'}).join("");
+  var ap=MAT.map(function(x,j){var k=Array.isArray(r.ap)?+r.ap[j]:0;return '<div class="row mu"><span>'+x+'</span><b>'+esc(AP[k]||AP[0])+'</b></div>'}).join("");
+  var ph="";(Array.isArray(r.p)?r.p:[]).slice(0,8).forEach(function(q){if(typeof q==="string"&&/^v\d+\/[A-Za-z0-9_\/.-]+$/.test(q))ph+='<a href="'+CLD+q+'" target="_blank" rel="noopener"><img src="'+CLD_T+q+'" alt="Photo du chantier" loading="lazy"></a>'});
+  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><div class="mu">'+esc(s.e)+' – '+esc(s.z)+'</div><div class="gl"><span>Avancement global</span><span>'+av+' %</span></div><span class="tg'+tc(r.e)+'">'+esc(r.e)+'</span>'+rows+
+  '<div class="mu" style="margin:12px 0">Ouvriers présents : <b>'+esc(r.w||"non renseigné")+'</b><br>Visite du <b>'+esc(r.d?r.d.split("-").reverse().join("/"):"—")+'</b> par <b>'+esc(r.b)+'</b><br>Observations : '+esc(r.o||"néant")+'</div>'+
+  '<h2 style="margin-top:14px">Approvisionnement</h2>'+ap+(r.oa?'<div class="mu">'+esc(r.oa)+'</div>':'')+(ph?'<div class="ph">'+ph+'</div>':'')+
+  '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn gh" id="close" type="button">Fermer</button>';
+  $("sheet").classList.add("open");
+}
 function closeSheet(){$("sheet").classList.remove("open");openId=null;if(location.hash){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}}}
-document.addEventListener("input",function(e){if(pend&&e.target.id&&e.target.id.indexOf("f_")===0&&e.target.id!=="f_ph")resetPend()});
-document.addEventListener("change",function(e){if(e.target.id==="f_ph")addPhotos(e.target.files)});
 document.addEventListener("click",function(e){
   var t=e.target.closest("button");
   if(!t){if(e.target.id==="sheet")closeSheet();return}
-  if(t.classList.contains("site"))openSite(t.dataset.id);
-  else if(t.id==="wa")sendWA();else if(t.id==="wa2")sendMsg();else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd"){openSite(repId)}
+  if(t.dataset.f){filt=t.dataset.f;render()}
+  else if(t.classList.contains("go"))openSite(t.dataset.id);
+  else if(t.dataset.sec){var a=t.dataset.sec==="av";$("sec_av").style.display=a?"":"none";$("sec_ap").style.display=a?"none":"";[].forEach.call(document.querySelectorAll(".seg button"),function(b){b.classList.toggle("on",b===t)})}
+  else if(t.id==="wa")sendWA();else if(t.id==="wa2"){if(pend)doShare(pend)}
+  else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd")openSite(repId);
 });
-render();
+document.addEventListener("input",function(e){
+  var x=e.target;
+  if(x.id==="q"){render();return}
+  if(x.classList&&x.classList.contains("ovr")){var v=vals();[].forEach.call(document.querySelectorAll(".ovr"),function(el,j){$("ovl"+j).textContent=el.value+" %"});$("gl").textContent=Math.round(mean(v))+" %"}
+  if(pend&&x.type!=="file")resetPend();
+});
+document.addEventListener("change",function(e){if(e.target.id==="f_ph")addPhotos(e.target.files);else if(pend&&e.target.type!=="file")resetPend()});
 function fromHash(){
   var m=location.hash.match(/^#k=(v\d+\/[A-Za-z0-9_.\/-]+)$/);
   if(m){
     $("panel").innerHTML='<h2>Chargement de la fiche…</h2>';$("sheet").classList.add("open");
-    fetch(CLD_RAW+m[1]).then(function(r){if(!r.ok)throw new Error("x");return r.json()}).then(showReport).catch(function(){$("panel").innerHTML='<h2>Fiche introuvable</h2><p class="note">Vérifiez votre connexion et rouvrez le lien.</p><button class="btn ghost" id="close" type="button">Fermer</button>'});
+    fetch(CLD_RAW+m[1]).then(function(r){if(!r.ok)throw new Error("x");return r.json()}).then(showReport).catch(function(){$("panel").innerHTML='<h2>Fiche introuvable</h2><p class="note">Vérifiez votre connexion et rouvrez le lien.</p><button class="btn gh" id="close" type="button">Fermer</button>'});
     return;
   }
-  m=location.hash.match(/^#r=(.+)$/);
-  if(m){try{showReport(dec(m[1]))}catch(e){}return}
-  m=location.hash.match(/^#(s\d\d)$/);if(m&&SITES.some(function(x){return x.id===m[1]}))openSite(m[1]);
+  m=location.hash.match(/^#(s\d\d)$/);if(m&&site(m[1]))openSite(m[1]);
 }
-fromHash();window.addEventListener("hashchange",fromHash);
+render();fromHash();window.addEventListener("hashchange",fromHash);
 </script>
 </body>
 </html>
