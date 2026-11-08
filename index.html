@@ -51,12 +51,14 @@ textarea{min-height:90px}
 label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
 .ov{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .ov input[type=range]{padding:0;margin-top:6px}
+.ovn{margin-top:8px;padding:10px}
 .ov select{width:auto}
 .ov b{color:var(--g)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .gl{background:var(--g);color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;font-weight:700;margin:10px 0}
 .msg{font-size:.88rem;margin-top:10px;min-height:1.2em}
 .note{font-size:.85rem;color:var(--mute)}
+.how{margin:10px 0 0;padding-left:20px;line-height:1.55}.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--g);color:#fff;padding:14px 20px;border-radius:14px;font-weight:700;z-index:30;display:none;max-width:90%}
 .ph{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .ph img{width:100%;border-radius:12px;display:block}
 </style>
@@ -64,13 +66,16 @@ label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
 <body>
 <div class="hd"><div class="logo">🏫</div><div><small>ING. AHMED EL HADY – ANESP</small><b>NKTT Sud – Suivi des chantiers</b></div></div>
 <div class="wrap">
-  <div class="hero"><small>SITUATION DU PORTEFEUILLE</small><h1>Choisissez un chantier</h1><p>Touchez une carte pour saisir la visite.</p></div>
+  <div class="hero"><small>SITUATION DU PORTEFEUILLE</small><h1>Choisissez un chantier</h1><ol class="how"><li>Touchez votre école.</li><li>Réglez l’avancement de chaque ouvrage, indiquez l’approvisionnement, ajoutez vos photos.</li><li>Touchez « Envoyer sur WhatsApp », puis partagez dans le groupe.</li></ol></div>
+  <p class="note" style="margin:0 0 12px">Pour consulter une fiche déjà envoyée, touchez « Voir la fiche » dans son message du groupe. « Retard » = délai consommé supérieur à l’avancement d’au moins 15 points.</p>
   <div class="stats" id="stats"></div>
   <div id="alert"></div>
   <input id="q" type="search" placeholder="Rechercher un chantier" aria-label="Rechercher un chantier">
   <div class="tabs" id="tabs"></div>
   <div id="list"></div>
+  <p class="note" style="text-align:center;margin:20px 0">Besoin d’aide ? Contactez l’Ing. Ahmed El Hady.</p>
 </div>
+<div class="toast" id="toast" role="status"></div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 <script>
 var CLD="https://res.cloudinary.com/kzluya6g/image/upload/",CLD_T=CLD+"w_700,q_auto/",CLD_RAW="https://res.cloudinary.com/kzluya6g/raw/upload/";
@@ -96,7 +101,7 @@ var MAT=["Ciment","Acier (fer)","Sable","Gravier","Agglos (parpaings)","Eau","Bo
 var $=function(i){return document.getElementById(i)};
 var LS={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 var last={};try{last=JSON.parse(LS.get("nktt_last3")||"{}")}catch(e){}
-var openId=null,photos=[],pend=null,filt="all",repId=null;
+var etTouched=false,openId=null,photos=[],pend=null,filt="all",repId=null;
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function pc(x){return Math.round(x*100)+" %"}
 function mean(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:0}
@@ -116,32 +121,33 @@ function render(){
   }).join("")||'<p class="note">Aucun chantier.</p>';
 }
 function openSite(id){
-  openId=id;photos=[];pend=null;
+  openId=id;photos=[];pend=null;etTouched=false;
   var s=site(),m=last[id],names=OV[s.y],ov=m?m.ov:names.map(function(){return 0}),today=new Date().toISOString().slice(0,10),et=m?m.s:s.s;
   $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><div class="mu">'+esc(s.e)+' – '+esc(s.z)+'</div><div class="mu">'+esc(s.i)+'</div><div class="mu">Situation de référence : '+pc(s.av)+'</div>'+
   '<div class="seg"><button type="button" class="on" data-sec="av">Avancement</button><button type="button" data-sec="ap">Approvisionnement</button></div>'+
-  '<div id="sec_av">'+names.map(function(o,j){return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b id="ovl'+j+'">'+ov[j]+' %</b></div><input class="ovr" type="range" min="0" max="100" step="5" value="'+ov[j]+'" aria-label="'+esc(o)+'"></div>'}).join("")+
+  '<div id="sec_av">'+names.map(function(o,j){return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b id="ovl'+j+'">'+ov[j]+' %</b></div><input class="ovr" type="range" min="0" max="100" step="5" value="'+ov[j]+'" aria-label="'+esc(o)+'"><input class="ovn" type="text" placeholder="Travaux en cours (ex. fouilles)" aria-label="Travaux : '+esc(o)+'"></div>'}).join("")+
   '<div class="gl"><span>Avancement global</span><span id="gl">'+Math.round(mean(ov))+' %</span></div>'+
   '<div class="two"><div><label for="f_et">État du chantier</label><select id="f_et">'+ETATS.map(function(e){return '<option'+(e===et?' selected':'')+'>'+e+'</option>'}).join("")+'</select></div><div><label for="f_ef">Ouvriers présents</label><input id="f_ef" type="number" inputmode="numeric" min="0"></div></div>'+
-  '<label for="f_ob">Observations (travaux en cours, problèmes)</label><textarea id="f_ob"></textarea></div>'+
+  '<label for="f_ob">Observations (problèmes rencontrés, actions demandées)</label><textarea id="f_ob"></textarea></div>'+
   '<div id="sec_ap" style="display:none">'+MAT.map(function(x,j){var v=m&&m.ap?m.ap[j]:0;return '<div class="ov"><div class="row"><span>'+x+'</span><select class="mat" aria-label="'+x+'">'+AP.map(function(a,k){return '<option value="'+k+'"'+(k===v?' selected':'')+'>'+a+'</option>'}).join("")+'</select></div></div>'}).join("")+
   '<label for="f_oa">Observations sur l’approvisionnement</label><textarea id="f_oa"></textarea></div>'+
   '<div class="two"><div><label for="f_dt">Date de visite</label><input id="f_dt" type="date" value="'+today+'"></div><div><label for="f_by">Technicien</label><input id="f_by" type="text" value="'+esc(s.k)+'"></div></div>'+
   '<label for="f_ph">Photos du chantier (8 maximum)</label><input id="f_ph" type="file" accept="image/*" multiple><div class="note" id="phc"></div>'+
-  '<button class="btn" id="wa" type="button">Envoyer sur WhatsApp</button><div class="two"><button class="btn gh" id="cp" type="button">Copier le message</button><button class="btn gh" id="close" type="button">Fermer</button></div><div class="msg" id="msg" role="status"></div>';
+  '<p class="note" style="margin-top:16px">Touchez « Envoyer sur WhatsApp », attendez la préparation, puis touchez le bouton qui apparaît pour choisir le groupe.</p><button class="btn" id="wa" type="button">Envoyer sur WhatsApp</button><div class="two"><button class="btn gh" id="cp" type="button">Copier le message</button><button class="btn gh" id="close" type="button">Retour à la liste</button></div><div class="msg" id="msg" role="status"></div>';
   $("sheet").classList.add("open");
 }
 function vals(){return [].map.call(document.querySelectorAll(".ovr"),function(x){return +x.value})}
 function fiche(paths){
-  return {i:openId,ov:vals(),ap:[].map.call(document.querySelectorAll(".mat"),function(x){return +x.value}),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,o:$("f_ob").value.trim(),oa:$("f_oa").value.trim(),p:paths||[]};
+  return {i:openId,ov:vals(),ap:[].map.call(document.querySelectorAll(".mat"),function(x){return +x.value}),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,n:[].map.call(document.querySelectorAll(".ovn"),function(x){return x.value.trim()}),o:$("f_ob").value.trim(),oa:$("f_oa").value.trim(),p:paths||[]};
 }
+function toast(t){var x=$("toast");x.textContent=t;x.style.display="block";setTimeout(function(){x.style.display="none"},3500)}
 function err(t){$("msg").textContent=t;alert(t)}
 function message(key){
   var s=site(),f=fiche();
   if(!f.b){err("Indiquez le nom du technicien avant d’envoyer.");return null}
   var names=OV[s.y],bad=MAT.map(function(x,j){return AP[f.ap[j]]!=="Disponible"?x+" : "+AP[f.ap[j]].toLowerCase():""}).filter(Boolean);
   var L=["*ANESP – NKTT Sud – Fiche de suivi*","Chantier : "+s.n,"Entreprise : "+s.e,"Zone : "+s.z,"Date de visite : "+f.d.split("-").reverse().join("/"),"Avancement global : "+Math.round(mean(f.ov))+" %","État : "+f.e,"Ouvrages :"];
-  names.forEach(function(o,j){L.push("• "+o+" : "+f.ov[j]+" %")});
+  names.forEach(function(o,j){L.push("• "+o+" : "+f.ov[j]+" %"+(f.n[j]?" – "+f.n[j]:""))});
   L.push("Approvisionnement : "+(bad.length?bad.join(", "):"tout disponible"));
   if(f.oa)L.push("Obs. approvisionnement : "+f.oa);
   L.push("Ouvriers présents : "+(f.w||"non renseigné"),"Technicien : "+f.b,"Observations : "+(f.o||"néant"));
@@ -158,7 +164,7 @@ function uploadJson(o){var fd=new FormData();fd.append("file",new Blob([JSON.str
 function busy(b){["wa","cp"].forEach(function(i){if($(i))$(i).disabled=b})}
 function resetPend(){pend=null;var w=$("wa2");if(w){w.id="wa";w.textContent="Envoyer sur WhatsApp"}}
 function doShare(m){
-  if(navigator.share){navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet()}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});return}
+  if(navigator.share){navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet();toast("✔ Fiche envoyée dans WhatsApp")}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});return}
   mark();window.location.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m);
 }
 function sendWA(){
@@ -196,13 +202,14 @@ function addPhotos(list){
 function showReport(r){
   var s=site(r.i);if(!s)return;repId=s.id;
   var names=OV[s.y],ov=Array.isArray(r.ov)?r.ov:[],av=Math.round(mean(ov.map(Number)));
-  var rows=names.map(function(o,j){var v=Math.max(0,Math.min(100,Number(ov[j])||0));return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b>'+v+' %</b></div><div class="bar"><i style="width:'+v+'%"></i></div></div>'}).join("");
-  var ap=MAT.map(function(x,j){var k=Array.isArray(r.ap)?+r.ap[j]:0;return '<div class="row mu"><span>'+x+'</span><b>'+esc(AP[k]||AP[0])+'</b></div>'}).join("");
+  var rows=names.map(function(o,j){var v=Math.max(0,Math.min(100,Number(ov[j])||0));return '<div class="ov"><div class="row"><span>'+esc(o)+'</span><b>'+v+' %</b></div><div class="bar"><i style="width:'+v+'%"></i></div>'+(r.n&&r.n[j]?'<div class="mu">'+esc(r.n[j])+'</div>':'')+'</div>'}).join("");
+  var ap=MAT.map(function(x,j){var k=Array.isArray(r.ap)?+r.ap[j]:0;return '<div class="row mu"><span>'+x+'</span><b style="color:'+(k===2?"var(--red)":k===1?"#b26a00":"inherit")+'">'+esc(AP[k]||AP[0])+'</b></div>'}).join("");
+  var rup=MAT.filter(function(x,j){return Array.isArray(r.ap)&&+r.ap[j]===2});
   var ph="";(Array.isArray(r.p)?r.p:[]).slice(0,8).forEach(function(q){if(typeof q==="string"&&/^v\d+\/[A-Za-z0-9_\/.-]+$/.test(q))ph+='<a href="'+CLD+q+'" target="_blank" rel="noopener"><img src="'+CLD_T+q+'" alt="Photo du chantier" loading="lazy"></a>'});
-  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><div class="mu">'+esc(s.e)+' – '+esc(s.z)+'</div><div class="gl"><span>Avancement global</span><span>'+av+' %</span></div><span class="tg'+tc(r.e)+'">'+esc(r.e)+'</span>'+rows+
+  $("panel").innerHTML='<h2>'+esc(s.n)+'</h2><div class="mu">'+esc(s.e)+' – '+esc(s.z)+'</div><div class="gl"><span>Avancement global</span><span>'+av+' %</span></div><span class="tg'+tc(r.e)+'">'+esc(r.e)+'</span>'+(rup.length?'<div class="alert" style="margin-top:10px">⚠ Rupture : '+esc(rup.join(", "))+'</div>':'')+rows+
   '<div class="mu" style="margin:12px 0">Ouvriers présents : <b>'+esc(r.w||"non renseigné")+'</b><br>Visite du <b>'+esc(r.d?r.d.split("-").reverse().join("/"):"—")+'</b> par <b>'+esc(r.b)+'</b><br>Observations : '+esc(r.o||"néant")+'</div>'+
   '<h2 style="margin-top:14px">Approvisionnement</h2>'+ap+(r.oa?'<div class="mu">'+esc(r.oa)+'</div>':'')+(ph?'<div class="ph">'+ph+'</div>':'')+
-  '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn gh" id="close" type="button">Fermer</button>';
+  '<button class="btn" id="upd" type="button">Mettre à jour ce chantier</button><button class="btn gh" id="close" type="button">Retour à la liste</button>';
   $("sheet").classList.add("open");
 }
 function closeSheet(){$("sheet").classList.remove("open");openId=null;if(location.hash){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}}}
@@ -218,15 +225,15 @@ document.addEventListener("click",function(e){
 document.addEventListener("input",function(e){
   var x=e.target;
   if(x.id==="q"){render();return}
-  if(x.classList&&x.classList.contains("ovr")){var v=vals();[].forEach.call(document.querySelectorAll(".ovr"),function(el,j){$("ovl"+j).textContent=el.value+" %"});$("gl").textContent=Math.round(mean(v))+" %"}
+  if(x.classList&&x.classList.contains("ovr")){var v=vals();[].forEach.call(document.querySelectorAll(".ovr"),function(el,j){$("ovl"+j).textContent=el.value+" %"});$("gl").textContent=Math.round(mean(v))+" %";if(!etTouched){var g=Math.round(mean(v)),sel=$("f_et");if(sel.value!=="Arrêté")sel.value=g===0?"Non entamé":g>=100?"Terminé":"En cours"}}
   if(pend&&x.type!=="file")resetPend();
 });
-document.addEventListener("change",function(e){if(e.target.id==="f_ph")addPhotos(e.target.files);else if(pend&&e.target.type!=="file")resetPend()});
+document.addEventListener("change",function(e){if(e.target.id==="f_et")etTouched=true;if(e.target.id==="f_ph")addPhotos(e.target.files);else if(pend&&e.target.type!=="file")resetPend()});
 function fromHash(){
   var m=location.hash.match(/^#k=(v\d+\/[A-Za-z0-9_.\/-]+)$/);
   if(m){
     $("panel").innerHTML='<h2>Chargement de la fiche…</h2>';$("sheet").classList.add("open");
-    fetch(CLD_RAW+m[1]).then(function(r){if(!r.ok)throw new Error("x");return r.json()}).then(showReport).catch(function(){$("panel").innerHTML='<h2>Fiche introuvable</h2><p class="note">Vérifiez votre connexion et rouvrez le lien.</p><button class="btn gh" id="close" type="button">Fermer</button>'});
+    fetch(CLD_RAW+m[1]).then(function(r){if(!r.ok)throw new Error("x");return r.json()}).then(showReport).catch(function(){$("panel").innerHTML='<h2>Fiche introuvable</h2><p class="note">Vérifiez votre connexion et rouvrez le lien.</p><button class="btn gh" id="close" type="button">Retour à la liste</button>'});
     return;
   }
   m=location.hash.match(/^#(s\d\d)$/);if(m&&site(m[1]))openSite(m[1]);
