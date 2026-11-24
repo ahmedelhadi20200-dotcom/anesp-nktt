@@ -61,13 +61,19 @@ label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
 .how{margin:10px 0 0;padding-left:20px;line-height:1.55}.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--g);color:#fff;padding:14px 20px;border-radius:14px;font-weight:700;z-index:30;display:none;max-width:90%}
 .ph{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .ph img{width:100%;border-radius:12px;display:block}
+.sync{font-size:.82rem;color:var(--mute);margin:0 0 12px;display:flex;align-items:center;gap:6px}
+.sync i{width:8px;height:8px;border-radius:50%;background:#c9b26b;display:inline-block}
+.sync.ok i{background:#3f8a5f}.sync.ko i{background:var(--red)}
+.lv{font-size:.85rem;color:var(--mute);margin-top:6px}
+.btn.sm{padding:12px;margin-top:8px}
 </style>
 </head>
 <body>
 <div class="hd"><div class="logo">🏫</div><div><small>ING. AHMED EL HADY – ANESP</small><b>NKTT Sud – Suivi des chantiers</b></div></div>
 <div class="wrap">
   <div class="hero"><small>SITUATION DU PORTEFEUILLE</small><h1>Choisissez un chantier</h1><ol class="how"><li>Touchez votre école.</li><li>Réglez l’avancement de chaque ouvrage, indiquez l’approvisionnement, ajoutez vos photos.</li><li>Touchez « Envoyer sur WhatsApp », puis partagez dans le groupe.</li></ol></div>
-  <p class="note" style="margin:0 0 12px">Pour consulter une fiche déjà envoyée, touchez « Voir la fiche » dans son message du groupe. « Retard » = délai consommé supérieur à l’avancement d’au moins 15 points.</p>
+  <p class="note" style="margin:0 0 12px">Pour consulter une fiche déjà envoyée, touchez « Voir la fiche » dans son message du groupe. « Retard » = délai consommé supérieur à l’avancement d’au moins 15 points. La liste affiche, pour chaque chantier, la dernière fiche envoyée par n’importe quel technicien.</p>
+  <div class="sync" id="sync"><i></i><span>Chargement des dernières fiches…</span></div>
   <div class="stats" id="stats"></div>
   <div id="alert"></div>
   <input id="q" type="search" placeholder="Rechercher un chantier" aria-label="Rechercher un chantier">
@@ -101,7 +107,8 @@ var MAT=["Ciment","Acier (fer)","Sable","Gravier","Agglos (parpaings)","Eau","Bo
 var $=function(i){return document.getElementById(i)};
 var LS={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 var last={};try{last=JSON.parse(LS.get("nktt_last3")||"{}")}catch(e){}
-var etTouched=false,openId=null,photos=[],pend=null,filt="all",repId=null;
+var etTouched=false,openId=null,photos=[],pend=null,filt="all",repId=null,pendKey=null;
+var TAG="nktt_sud",CLD_LIST="https://res.cloudinary.com/kzluya6g/raw/list/";
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function pc(x){return Math.round(x*100)+" %"}
 function mean(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:0}
@@ -117,8 +124,52 @@ function render(){
   var q=$("q").value.toLowerCase();
   $("list").innerHTML=SITES.filter(function(s){var c=cur(s);return(filt==="all"||c.s===filt)&&(s.n+" "+s.z+" "+s.e).toLowerCase().indexOf(q)>-1}).map(function(s){
     var c=cur(s);
-    return '<div class="site"><div class="row"><span class="tg'+tc(c.s)+'">'+esc(c.s)+'</span>'+((s.d-c.av>=.15&&c.s!=="Terminé")?'<span class="tg late">Retard</span>':'')+'</div><h3>'+esc(s.n)+'</h3><div class="mu">'+esc(s.z)+'</div><div class="mu">Entreprise <b>'+esc(s.e)+'</b></div><div class="mu">Technicien <b>'+esc(s.k)+'</b></div><div class="bar"><i style="width:'+c.av*100+'%"></i></div><div class="row"><b>'+pc(c.av)+'</b><span class="mu">Délai consommé '+pc(s.d)+'</span></div><button class="btn go" type="button" data-id="'+s.id+'">Saisir la visite →</button></div>';
+    return '<div class="site"><div class="row"><span class="tg'+tc(c.s)+'">'+esc(c.s)+'</span>'+((s.d-c.av>=.15&&c.s!=="Terminé")?'<span class="tg late">Retard</span>':'')+'</div><h3>'+esc(s.n)+'</h3><div class="mu">'+esc(s.z)+'</div><div class="mu">Entreprise <b>'+esc(s.e)+'</b></div><div class="mu">Technicien <b>'+esc(s.k)+'</b></div><div class="bar"><i style="width:'+c.av*100+'%"></i></div><div class="row"><b>'+pc(c.av)+'</b><span class="mu">Délai consommé '+pc(s.d)+'</span></div>'+lastLine(s)+'<button class="btn go" type="button" data-id="'+s.id+'">Saisir la visite →</button></div>';
   }).join("")||'<p class="note">Aucun chantier.</p>';
+}
+function fdate(d){return d?String(d).split("-").reverse().join("/"):""}
+function lastLine(s){
+  var m=last[s.id];if(!m||!m.t)return "";
+  var h='<div class="lv">Dernière fiche'+(m.d?' : visite du <b>'+esc(fdate(m.d))+'</b>':'')+(m.b?' par <b>'+esc(m.b)+'</b>':'')+'</div>';
+  if(m.k)h+='<button class="btn gh sm view" type="button" data-k="'+esc(m.k)+'">Voir la dernière fiche</button>';
+  return h;
+}
+function setSync(c,t){var x=$("sync");x.className="sync "+c;x.querySelector("span").textContent=t}
+/* Synchronisation partagée : chaque fiche envoyée est déposée sur Cloudinary avec l'étiquette nktt_sud_<id>.
+   À l'ouverture, on lit la liste de chaque chantier et on affiche la plus récente pour tout le monde. */
+function applyRemote(id,r,key,ver){
+  var s=site(id);if(!s||!r||r.i!==id||!Array.isArray(r.ov))return false;
+  var n=OV[s.y].length,ov=r.ov.slice(0,n).map(function(v){return Math.max(0,Math.min(100,Number(v)||0))});
+  while(ov.length<n)ov.push(0);
+  var t=Number(r.t)||ver*1000,m=last[id];
+  if(m&&m.t&&m.t>=t)return false;
+  last[id]={ov:ov,ap:Array.isArray(r.ap)?r.ap.map(Number):[],s:ETATS.indexOf(r.e)>-1?r.e:s.s,d:r.d||"",b:r.b||"",t:t,k:key};
+  return true;
+}
+var syncing=false;
+function sync(){
+  if(syncing)return;syncing=true;
+  var bust="?_="+Math.floor(Date.now()/15000),ok=0,fail=0;
+  Promise.all(SITES.map(function(s){
+    return fetch(CLD_LIST+TAG+"_"+s.id+".json"+bust,{cache:"no-store"}).then(function(r){
+      if(r.status===404){ok++;return null}
+      if(!r.ok)throw new Error("list");
+      return r.json();
+    }).then(function(j){
+      if(!j)return;ok++;
+      var b=null;(j.resources||[]).forEach(function(x){if(!b||x.version>b.version)b=x});
+      if(!b)return;
+      var key="v"+b.version+"/"+b.public_id+(b.format&&!/\.[a-z0-9]+$/i.test(b.public_id)?"."+b.format:"");
+      if(last[s.id]&&last[s.id].k===key)return;
+      return fetch(CLD_RAW+key).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(r){applyRemote(s.id,r,key,b.version)}).catch(function(){});
+    }).catch(function(){fail++});
+  })).then(function(){
+    syncing=false;
+    LS.set("nktt_last3",JSON.stringify(last));render();
+    var hh=new Date().toTimeString().slice(0,5);
+    if(fail===SITES.length)setSync("ko","Synchronisation impossible : affichage des données de ce téléphone uniquement.");
+    else setSync("ok","À jour – dernières fiches de tout le groupe (vérifié à "+hh+")");
+  });
 }
 function openSite(id){
   openId=id;photos=[];pend=null;etTouched=false;
@@ -138,7 +189,7 @@ function openSite(id){
 }
 function vals(){return [].map.call(document.querySelectorAll(".ovr"),function(x){return +x.value})}
 function fiche(paths){
-  return {i:openId,ov:vals(),ap:[].map.call(document.querySelectorAll(".mat"),function(x){return +x.value}),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,n:[].map.call(document.querySelectorAll(".ovn"),function(x){return x.value.trim()}),o:$("f_ob").value.trim(),oa:$("f_oa").value.trim(),p:paths||[]};
+  return {i:openId,ov:vals(),ap:[].map.call(document.querySelectorAll(".mat"),function(x){return +x.value}),e:$("f_et").value,w:$("f_ef").value||"",b:$("f_by").value.trim(),d:$("f_dt").value,n:[].map.call(document.querySelectorAll(".ovn"),function(x){return x.value.trim()}),o:$("f_ob").value.trim(),oa:$("f_oa").value.trim(),p:paths||[],t:Date.now()};
 }
 function toast(t){var x=$("toast");x.textContent=t;x.style.display="block";setTimeout(function(){x.style.display="none"},3500)}
 function err(t){$("msg").textContent=t;alert(t)}
@@ -154,15 +205,15 @@ function message(key){
   if(key)L.push("Voir la fiche : "+SITE_URL+"#k="+key);
   return L.join("\n");
 }
-function mark(){var f=fiche();last[openId]={ov:f.ov,ap:f.ap,s:f.e};LS.set("nktt_last3",JSON.stringify(last));render()}
+function mark(){var f=fiche();last[openId]={ov:f.ov,ap:f.ap,s:f.e,d:f.d,b:f.b,t:f.t,k:pendKey||""};LS.set("nktt_last3",JSON.stringify(last));render()}
 function post(kind,fd){
   fd.append("upload_preset","anesp2026");
   return fetch("https://api.cloudinary.com/v1_1/kzluya6g/"+kind+"/upload",{method:"POST",body:fd}).then(function(r){if(!r.ok)throw new Error("up");return r.json()}).then(function(j){var u=j.secure_url,i=u.indexOf("/upload/");if(i<0)throw new Error("up");return u.slice(i+8)});
 }
 function upload(f){var fd=new FormData();fd.append("file",f);return post("image",fd)}
-function uploadJson(o){var fd=new FormData();fd.append("file",new Blob([JSON.stringify(o)],{type:"application/json"}),"fiche.json");return post("raw",fd)}
+function uploadJson(o){var fd=new FormData();fd.append("file",new Blob([JSON.stringify(o)],{type:"application/json"}),"fiche.json");fd.append("tags",TAG+","+TAG+"_"+o.i);return post("raw",fd)}
 function busy(b){["wa","cp"].forEach(function(i){if($(i))$(i).disabled=b})}
-function resetPend(){pend=null;var w=$("wa2");if(w){w.id="wa";w.textContent="Envoyer sur WhatsApp"}}
+function resetPend(){pend=null;pendKey=null;var w=$("wa2");if(w){w.id="wa";w.textContent="Envoyer sur WhatsApp"}}
 function doShare(m){
   if(navigator.share){navigator.share({text:m,title:"ANESP – NKTT Sud"}).then(function(){mark();closeSheet();toast("✔ Fiche envoyée dans WhatsApp")}).catch(function(e){if(e&&e.name!=="AbortError")$("msg").textContent="Partage impossible. Touchez « Copier le message »."});return}
   mark();window.location.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m);
@@ -174,7 +225,7 @@ function sendWA(){
   Promise.all(photos.map(function(f){return upload(f).then(function(q){done++;$("msg").textContent="Envoi des photos… "+done+"/"+n;return q})})).then(function(paths){
     return uploadJson(fiche(paths)).catch(function(){return null});
   }).then(function(key){
-    busy(false);pend=message(key);
+    busy(false);pendKey=key;pend=message(key);if(key)mark();
     var b=$("wa");b.textContent="Prêt : partager dans WhatsApp";b.id="wa2";
     $("msg").textContent="Touchez maintenant le bouton pour partager dans le groupe.";
   }).catch(function(){busy(false);$("msg").textContent="Envoi des photos impossible. Vérifiez le réseau et réessayez."});
@@ -218,6 +269,7 @@ document.addEventListener("click",function(e){
   if(!t){if(e.target.id==="sheet")closeSheet();return}
   if(t.dataset.f){filt=t.dataset.f;render()}
   else if(t.classList.contains("go"))openSite(t.dataset.id);
+  else if(t.classList.contains("view"))location.hash="#k="+t.dataset.k;
   else if(t.dataset.sec){var a=t.dataset.sec==="av";$("sec_av").style.display=a?"":"none";$("sec_ap").style.display=a?"none":"";[].forEach.call(document.querySelectorAll(".seg button"),function(b){b.classList.toggle("on",b===t)})}
   else if(t.id==="wa")sendWA();else if(t.id==="wa2"){if(pend)doShare(pend)}
   else if(t.id==="cp")copyMsg();else if(t.id==="close")closeSheet();else if(t.id==="upd")openSite(repId);
@@ -239,6 +291,8 @@ function fromHash(){
   m=location.hash.match(/^#(s\d\d)$/);if(m&&site(m[1]))openSite(m[1]);
 }
 render();fromHash();window.addEventListener("hashchange",fromHash);
+sync();setInterval(function(){if(!document.hidden&&!$("sheet").classList.contains("open"))sync()},60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)sync()});
 </script>
 </body>
 </html>
